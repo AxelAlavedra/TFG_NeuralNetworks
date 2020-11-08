@@ -7,14 +7,16 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour
 {
     [Header("Car Settings")]
+    [Tooltip("If the player will control the car or not")]
+    public bool playerControlled = false;
     [Tooltip("Speed at which the car will accelerate")]
     public float carSpeed = 50.0f;
     [Tooltip("Speed at which the car will brake")]
     public float brakeSpeed = 500.0f;
     [Tooltip("Max steer angle the car can achieve")]
     public float maxSteerAngle = 30.0f;
-   // [Tooltip("Max speed the car can achieve")]
-   // public float maxCarSpeed = 200.0f;
+    //[Tooltip("Max speed the car can achieve")]
+    //public float maxCarSpeed = 200.0f;
 
     [Header("Car Info")]
     public Transform wheelCollidersParentTransform;
@@ -29,6 +31,9 @@ public class CarMovement : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        if (playerControlled)
+            Camera.main.gameObject.SetActive(false);
+
         wheelColliders = new List<WheelCollider>();
 
         for(int i = 0; i < wheelCollidersParentTransform.childCount; i++)
@@ -48,9 +53,12 @@ public class CarMovement : MonoBehaviour
 
     private void GetInput()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
-        brakeInput = Input.GetAxis("Jump");
+        if(playerControlled)
+        {
+            horizontalInput = Input.GetAxis("Horizontal");
+            verticalInput = Input.GetAxis("Vertical");
+            brakeInput = Input.GetAxis("Jump");
+        }
     }
 
     private void Accelerate()
