@@ -19,7 +19,9 @@ public class CarMovement : MonoBehaviour
     //public float maxCarSpeed = 200.0f;
 
     [Header("Car Info")]
+    [Tooltip("The parent gameObject of the wheels")]
     public Transform wheelCollidersParentTransform;
+    [Tooltip("All the wheel transforms of the car")]
     public List<Transform> wheelTransforms;
     [SerializeField]
     float steeringAngle, horizontalInput, brakeInput, verticalInput = .0f;
