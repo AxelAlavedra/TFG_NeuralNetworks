@@ -52,14 +52,18 @@ public class CheckpointHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Metrics calculation
-        distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position);
-        currentPositionOnPath = pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Loop);
-        directionOfPath = pathCreator.path.GetDirectionAtDistance(distanceTravelled, EndOfPathInstruction.Loop);
-        distanceToCheckpoint = Mathf.Abs(pathCreator.path.GetClosestDistanceAlongPath(checkpoints[currentCheckpoint]) -  distanceTravelled);
+        //Metrics calculation with pathcreator
+        //distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position);
+        //currentPositionOnPath = pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Loop);
+        //directionOfPath = pathCreator.path.GetDirectionAtDistance(distanceTravelled, EndOfPathInstruction.Loop);
+        //distanceToCheckpoint = Mathf.Abs(pathCreator.path.GetClosestDistanceAlongPath(checkpoints[currentCheckpoint]) -  distanceTravelled);
+
+        //Metrics calculation without pathcreator
+        //distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position);
+        distanceToCheckpoint = Vector3.Distance(transform.position, checkpoints[currentCheckpoint]);
 
         //Check if the current checkpoint has been reached, if so, increment checkpoint
-        if (Vector3.Distance(transform.position, checkpoints[currentCheckpoint]) < checkpointMinDistance)
+        if (distanceToCheckpoint < checkpointMinDistance)
         {
             currentCheckpoint++;
             if (currentCheckpoint >= checkpoints.Count)
