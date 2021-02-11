@@ -11,7 +11,7 @@ namespace Axel.NeuralNetworks
         private int rays = 5;
         [SerializeField]
         [Tooltip("Amount of rays that will be casted")]
-        private float rayLength = 5;
+        private float rayLength = 10;
         [SerializeField]
         [Tooltip("The amount of degrees where rays will be casted in")]
         private int degrees = 90;
@@ -32,7 +32,7 @@ namespace Axel.NeuralNetworks
             {
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, transform.forward, out hit, rayLength, layerMask.value))
-                    rayInputs[0] = (10 - hit.distance) / rayLength;
+                    rayInputs[0] = (rayLength - hit.distance) / rayLength;
                 else
                     rayInputs[0] = 0;
             }
@@ -46,7 +46,7 @@ namespace Axel.NeuralNetworks
                     Vector3 direction = Quaternion.AngleAxis(currentAngle, Vector3.up) * transform.forward;
                     RaycastHit hit;
                     if (Physics.Raycast(transform.position, direction, out hit, rayLength, layerMask.value))
-                        rayInputs[i] = (10 - hit.distance) / rayLength;
+                        rayInputs[i] = (rayLength - hit.distance) / rayLength;
                     else
                         rayInputs[i] = 0;
 

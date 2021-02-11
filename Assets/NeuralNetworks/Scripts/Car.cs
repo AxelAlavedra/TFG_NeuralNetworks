@@ -31,12 +31,19 @@ namespace Axel.NeuralNetworks
         private List<WheelCollider> wheelColliders;
         private enum WheelPosition { FrontRight, RearRight, FrontLeft, RearLeft };
 
+        [Header("Neural Network")]
         NeuralNetwork brain;
         public RaySensor raySensor;
+        public bool training = false;
+        Vector3 startPosition;
+        Quaternion startRotation;
 
         // Start is called before the first frame update
         private void Start()
         {
+            startPosition = transform.position;
+            startRotation = transform.rotation;
+
             if (playerControlled)
                 Camera.main.gameObject.SetActive(false);
             else
@@ -53,9 +60,26 @@ namespace Axel.NeuralNetworks
             }
         }
 
-        // Update is called once per frame
         private void FixedUpdate()
         {
+            if(Input.GetKeyDown(KeyCode.F1))
+            {
+                transform.position = startPosition;
+                transform.rotation = startRotation;
+
+                wheelColliders[(int)WheelPosition.FrontLeft].motorTorque = 0;
+                wheelColliders[(int)WheelPosition.FrontRight].motorTorque = 0;
+
+                wheelColliders[(int)WheelPosition.FrontLeft].brakeTorque = 0;
+                wheelColliders[(int)WheelPosition.FrontRight].brakeTorque = 0;
+
+                wheelColliders[(int)WheelPosition.FrontLeft].steerAngle = 0;
+                wheelColliders[(int)WheelPosition.FrontRight].steerAngle = 0;
+
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                UpdateWheelPoses();
+            }
+
             GetInput();
             Steer();
             Accelerate();
@@ -73,9 +97,41 @@ namespace Axel.NeuralNetworks
             else
             {
                 // Use NN to obtain input
-                float[] output = brain.FeedForward(raySensor.AnalyzeSensors()); //Analyze sensors and send result as input for the NN
+                // output 0 horizontal input - steer
+                // output 1 vertical input - accelerate
+                float[] input = raySensor.AnalyzeSensors(); //input of 0 means far from collider, input of 1 means close to collider
+                float[] output = brain.FeedForward(input); //Analyze sensors and send result as input for the NN
                 horizontalInput = output[0];
                 verticalInput = output[1];
+
+                if(training)
+                {
+                    // 5 sensors
+                    // sensor 0 right
+                    // sensor 1 front-right
+                    // sensor 2 front
+                    // sensor 3 front-left
+                    // sensor 4 left
+                    brain.BackPropagate(new float[] { 0, 0, 0, 0, 0 }, new float[] { 0, 1 });
+                    brain.BackPropagate(new float[] { 1, 0, 0, 0, 0 }, new float[] { -1, 1 });
+                    brain.BackPropagate(new float[] { 0, 1, 0, 0, 0 }, new float[] { -1.0f, 0.5f});
+                    brain.BackPropagate(new float[] { 0, 0, 1, 0, 0 }, new float[] { 0, -1});
+                    brain.BackPropagate(new float[] { 0, 0, 0, 1, 0 }, new float[] { 1.0f, 0.5f});
+                    brain.BackPropagate(new float[] { 0, 0, 0, 0, 1 }, new float[] { 1, 1});
+                    brain.BackPropagate(new float[] { 1, 1, 0, 0, 0 }, new float[] { -1, 0.5f});
+                    brain.BackPropagate(new float[] { 1, 1, 1, 0, 0 }, new float[] { -1, -1});
+                    brain.BackPropagate(new float[] { 1, 1, 1, 1, 0 }, new float[] { 0, -1});
+                    brain.BackPropagate(new float[] { 0, 0, 0, 1, 1 }, new float[] { 1, 0.5f });
+                    brain.BackPropagate(new float[] { 0, 0, 1, 1, 1 }, new float[] { 1, -1});
+                    brain.BackPropagate(new float[] { 0, 1, 1, 1, 1 }, new float[] { 0, -1});
+                    brain.BackPropagate(new float[] { 1, 0, 0, 0, 1 }, new float[] { 0, 1 });
+                    brain.BackPropagate(new float[] { 1, 1, 0, 0, 1 }, new float[] { -1.0f, 1});
+                    brain.BackPropagate(new float[] { 1, 1, 1, 0, 1 }, new float[] { -1.0f, -1});
+                    brain.BackPropagate(new float[] { 1, 0, 0, 1, 1 }, new float[] { 1.0f, 1 });
+                    brain.BackPropagate(new float[] { 1, 0, 1, 1, 1 }, new float[] { 1.0f, -1});
+                    brain.BackPropagate(new float[] { 1, 1, 0, 1, 1 }, new float[] { 0, 1 });
+                    brain.BackPropagate(new float[] { 1, 1, 1, 1, 1 }, new float[] { 0, -1});
+                }                  
             }
         }
 
