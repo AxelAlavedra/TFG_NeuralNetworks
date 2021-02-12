@@ -10,9 +10,9 @@ namespace Axel.NeuralNetworks
         /// <summary>
         /// The configuration used on this Neural Network
         /// </summary>
-        NeuralNetworkConfiguration config;
+        public NeuralNetworkConfiguration config;
 
-        float[][] neurons;
+        public float[][] neurons;
         float[][] biases;
         float[][][] weights;
 

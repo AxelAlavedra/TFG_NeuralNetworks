@@ -32,9 +32,10 @@ namespace Axel.NeuralNetworks
         private enum WheelPosition { FrontRight, RearRight, FrontLeft, RearLeft };
 
         [Header("Neural Network")]
-        NeuralNetwork brain;
         public RaySensor raySensor;
         public bool training = false;
+        public NNGraph graph;
+        NeuralNetwork brain;
         Vector3 startPosition;
         Quaternion startRotation;
 
@@ -50,6 +51,7 @@ namespace Axel.NeuralNetworks
             {
                 NeuralNetworkConfiguration NNConfig = GetComponent<NeuralNetworkConfiguration>();
                 brain = new NeuralNetwork(NNConfig);
+                if (graph != null) graph.Initialize(brain);
             }
 
             wheelColliders = new List<WheelCollider>();
@@ -113,11 +115,11 @@ namespace Axel.NeuralNetworks
                     // sensor 3 front-left
                     // sensor 4 left
                     brain.BackPropagate(new float[] { 0, 0, 0, 0, 0 }, new float[] { 0, 1 });
-                    brain.BackPropagate(new float[] { 1, 0, 0, 0, 0 }, new float[] { -1, 1 });
+                    brain.BackPropagate(new float[] { 1, 0, 0, 0, 0 }, new float[] { 0, 1 });
                     brain.BackPropagate(new float[] { 0, 1, 0, 0, 0 }, new float[] { -1.0f, 0.5f});
                     brain.BackPropagate(new float[] { 0, 0, 1, 0, 0 }, new float[] { 0, -1});
                     brain.BackPropagate(new float[] { 0, 0, 0, 1, 0 }, new float[] { 1.0f, 0.5f});
-                    brain.BackPropagate(new float[] { 0, 0, 0, 0, 1 }, new float[] { 1, 1});
+                    brain.BackPropagate(new float[] { 0, 0, 0, 0, 1 }, new float[] { 0, 1});
                     brain.BackPropagate(new float[] { 1, 1, 0, 0, 0 }, new float[] { -1, 0.5f});
                     brain.BackPropagate(new float[] { 1, 1, 1, 0, 0 }, new float[] { -1, -1});
                     brain.BackPropagate(new float[] { 1, 1, 1, 1, 0 }, new float[] { 0, -1});
@@ -125,9 +127,9 @@ namespace Axel.NeuralNetworks
                     brain.BackPropagate(new float[] { 0, 0, 1, 1, 1 }, new float[] { 1, -1});
                     brain.BackPropagate(new float[] { 0, 1, 1, 1, 1 }, new float[] { 0, -1});
                     brain.BackPropagate(new float[] { 1, 0, 0, 0, 1 }, new float[] { 0, 1 });
-                    brain.BackPropagate(new float[] { 1, 1, 0, 0, 1 }, new float[] { -1.0f, 1});
+                    brain.BackPropagate(new float[] { 1, 1, 0, 0, 1 }, new float[] { -1.0f, 0.5f});
                     brain.BackPropagate(new float[] { 1, 1, 1, 0, 1 }, new float[] { -1.0f, -1});
-                    brain.BackPropagate(new float[] { 1, 0, 0, 1, 1 }, new float[] { 1.0f, 1 });
+                    brain.BackPropagate(new float[] { 1, 0, 0, 1, 1 }, new float[] { 1.0f, 0.5f });
                     brain.BackPropagate(new float[] { 1, 0, 1, 1, 1 }, new float[] { 1.0f, -1});
                     brain.BackPropagate(new float[] { 1, 1, 0, 1, 1 }, new float[] { 0, 1 });
                     brain.BackPropagate(new float[] { 1, 1, 1, 1, 1 }, new float[] { 0, -1});
