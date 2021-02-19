@@ -695,9 +695,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControlled: 0
+  training: 1
+  graph: {fileID: 0}
   carSpeed: 100
   brakeSpeed: 500
   maxSteerAngle: 30
+  raySensor: {fileID: 871102372}
   wheelCollidersParentTransform: {fileID: 1925339177927181944}
   wheelTransforms:
   - {fileID: 1925339177927181928}
@@ -708,9 +711,6 @@ MonoBehaviour:
   horizontalInput: 0
   brakeInput: 0
   verticalInput: 0
-  raySensor: {fileID: 871102372}
-  training: 1
-  graph: {fileID: 0}
 --- !u!114 &1880934076
 MonoBehaviour:
   m_ObjectHideFlags: 0
