@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Axel.NeuralNetworks
 {
+    [Serializable]
     /// <summary>
     /// Contains the configuration needed to create a Neural Network
     /// </summary>

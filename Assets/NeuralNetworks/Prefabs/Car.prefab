@@ -43,9 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df37e02ed1d863942a228aa662ae071d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rays: 5
-  rayLength: 10
-  degrees: 180
+  rays: 3
+  rayLength: 15
+  degrees: 90
   layerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -636,7 +636,6 @@ GameObject:
   - component: {fileID: 1925339177927181900}
   - component: {fileID: 1925339177921706302}
   - component: {fileID: 1925339178584243670}
-  - component: {fileID: 1880934076}
   m_Layer: 0
   m_Name: Car
   m_TagString: Player
@@ -697,6 +696,8 @@ MonoBehaviour:
   playerControlled: 0
   training: 1
   graph: {fileID: 0}
+  brain: {fileID: 11400000, guid: eba31917fa9d0f6438481ec889b06c28, type: 2}
+  firstPersonCamera: 1
   carSpeed: 100
   brakeSpeed: 500
   maxSteerAngle: 30
@@ -711,22 +712,6 @@ MonoBehaviour:
   horizontalInput: 0
   brakeInput: 0
   verticalInput: 0
---- !u!114 &1880934076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1925339177926892084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2efdbedf0357b7c4a95192592d4ee460, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  identifier: CarAgent
-  inputSize: 5
-  outputSize: 2
-  hiddenLayerSize: 04000000
 --- !u!1 &1925339177926892086
 GameObject:
   m_ObjectHideFlags: 0

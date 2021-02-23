@@ -9,6 +9,7 @@ namespace Axel.NeuralNetworks
     public class CarAgent : Agent
     {
         [Header("Car Settings")]
+        public bool firstPersonCamera = false;
         [Tooltip("Speed at which the car will accelerate")]
         public float carSpeed = 50.0f;
         [Tooltip("Speed at which the car will brake")]
@@ -30,7 +31,9 @@ namespace Axel.NeuralNetworks
         float steeringAngle, horizontalInput, brakeInput, verticalInput = .0f;
 
         private List<WheelCollider> wheelColliders;
+
         private enum WheelPosition { FrontRight, RearRight, FrontLeft, RearLeft };
+        private GameObject mainCamera;
 
 
 
@@ -83,8 +86,7 @@ namespace Axel.NeuralNetworks
         {
             base.Start();
 
-            if (playerControlled)
-                Camera.main.gameObject.SetActive(false);
+            mainCamera = Camera.main.gameObject;
 
             startPosition = transform.position;
             startRotation = transform.rotation;
@@ -94,6 +96,14 @@ namespace Axel.NeuralNetworks
             {
                 wheelColliders.Add(wheelCollidersParentTransform.GetChild(i).GetComponent<WheelCollider>());
             }
+        }
+
+        private void Update()
+        {
+            if (firstPersonCamera && mainCamera.activeInHierarchy)
+                mainCamera.SetActive(false);
+            else if(!firstPersonCamera && !mainCamera.activeInHierarchy)
+                mainCamera.SetActive(true);
         }
 
         private void Accelerate()

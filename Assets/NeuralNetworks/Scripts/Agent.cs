@@ -7,24 +7,24 @@ namespace Axel.NeuralNetworks
     /// <summary>
     /// Agent abstract class for Neural Network based behaviours.
     /// </summary>
-    [RequireComponent(typeof(NeuralNetworkConfiguration))]
     public class Agent : MonoBehaviour
     {
-        [Header("Neural Network")]
+        [Header("Agent")]
         [Tooltip("If the player will control the agent or not")]
         public bool playerControlled = false;
         [Tooltip("If the agent is training or not")]
         public bool training = false;
         [Tooltip("NN Graph for visualization of the Neural Network")]
-        public NNGraph graph;
+        public NNGraph graph = null;
         [Tooltip("The neural network the agent is using")]
-        private NeuralNetwork brain;
+        public NeuralNetwork brain = null;
 
         //ToDo (Axel): Make NN initialization always be called, without having to call base Start on child class.
         protected virtual void Start()
         {
-            NeuralNetworkConfiguration NNConfig = GetComponent<NeuralNetworkConfiguration>();
-            brain = new NeuralNetwork(NNConfig);
+            //NeuralNetworkConfiguration NNConfig = GetComponent<NeuralNetworkConfiguration>();
+            if (brain != null)
+                brain.Init();
 
             // ToDo (Axel): improve UI initialization
             if (graph != null)
@@ -68,32 +68,53 @@ namespace Axel.NeuralNetworks
 
         public void Train()
         {
-            // Backpropagation
-            // 5 sensors
-            // sensor 0 right
-            // sensor 1 front-right
-            // sensor 2 front
-            // sensor 3 front-left
-            // sensor 4 left
-            brain.BackPropagate(new float[] { 0, 0, 0, 0, 0 }, new float[] { 0, 1 });
-            brain.BackPropagate(new float[] { 1, 0, 0, 0, 0 }, new float[] { 0, 1 });
-            brain.BackPropagate(new float[] { 0, 1, 0, 0, 0 }, new float[] { -1.0f, 0.5f });
-            brain.BackPropagate(new float[] { 0, 0, 1, 0, 0 }, new float[] { 0, -1 });
-            brain.BackPropagate(new float[] { 0, 0, 0, 1, 0 }, new float[] { 1.0f, 0.5f });
-            brain.BackPropagate(new float[] { 0, 0, 0, 0, 1 }, new float[] { 0, 1 });
-            brain.BackPropagate(new float[] { 1, 1, 0, 0, 0 }, new float[] { -1, 0.5f });
-            brain.BackPropagate(new float[] { 1, 1, 1, 0, 0 }, new float[] { -1, -1 });
-            brain.BackPropagate(new float[] { 1, 1, 1, 1, 0 }, new float[] { 0, -1 });
-            brain.BackPropagate(new float[] { 0, 0, 0, 1, 1 }, new float[] { 1, 0.5f });
-            brain.BackPropagate(new float[] { 0, 0, 1, 1, 1 }, new float[] { 1, -1 });
-            brain.BackPropagate(new float[] { 0, 1, 1, 1, 1 }, new float[] { 0, -1 });
-            brain.BackPropagate(new float[] { 1, 0, 0, 0, 1 }, new float[] { 0, 1 });
-            brain.BackPropagate(new float[] { 1, 1, 0, 0, 1 }, new float[] { -1.0f, 0.5f });
-            brain.BackPropagate(new float[] { 1, 1, 1, 0, 1 }, new float[] { -1.0f, -1 });
-            brain.BackPropagate(new float[] { 1, 0, 0, 1, 1 }, new float[] { 1.0f, 0.5f });
-            brain.BackPropagate(new float[] { 1, 0, 1, 1, 1 }, new float[] { 1.0f, -1 });
-            brain.BackPropagate(new float[] { 1, 1, 0, 1, 1 }, new float[] { 0, 1 });
-            brain.BackPropagate(new float[] { 1, 1, 1, 1, 1 }, new float[] { 0, -1 });
+            for (int i = 0; i < 100000; i++)
+            {
+                brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
+                brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
+                brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
+                brain.BackPropagate(new float[] { 0, 0, 1 }, new float[] { 1, 1 });
+                brain.BackPropagate(new float[] { 1, 1, 0 }, new float[] { -1, 0 });
+                brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
+                brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
+                brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });
+
+
+                // Backpropagation
+                // 5 sensors
+                // sensor 0 right
+                // sensor 1 front-right
+                // sensor 2 front
+                // sensor 3 front-left
+                // sensor 4 left
+                /*brain.BackPropagate(new float[] { 0, 0, 0, 0, 0 }, new float[] { 0, 1 });
+                brain.BackPropagate(new float[] { 1, 0, 0, 0, 0 }, new float[] { -1, 0 });
+                brain.BackPropagate(new float[] { 0, 1, 0, 0, 0 }, new float[] { -1.0f, 0.0f });
+                brain.BackPropagate(new float[] { 0, 0, 1, 0, 0 }, new float[] { 0, -1 });
+                brain.BackPropagate(new float[] { 0, 0, 0, 1, 0 }, new float[] { 1.0f, 0.0f });
+                brain.BackPropagate(new float[] { 0, 0, 0, 0, 1 }, new float[] { 1, 0 });
+                brain.BackPropagate(new float[] { 1, 1, 0, 0, 0 }, new float[] { -1, 0.0f });
+                brain.BackPropagate(new float[] { 1, 1, 1, 0, 0 }, new float[] { -1, -0.5f });
+                brain.BackPropagate(new float[] { 1, 1, 1, 1, 0 }, new float[] { -1, -0.5f });
+                brain.BackPropagate(new float[] { 0, 0, 0, 1, 1 }, new float[] { 1, 0.0f });
+                brain.BackPropagate(new float[] { 0, 0, 1, 1, 1 }, new float[] { 1, -0.5f });
+                brain.BackPropagate(new float[] { 0, 1, 1, 1, 1 }, new float[] { 1, -0.5f });
+                brain.BackPropagate(new float[] { 1, 0, 0, 0, 1 }, new float[] { 0, 0.75f });
+                brain.BackPropagate(new float[] { 1, 1, 0, 0, 1 }, new float[] { -1.0f, 0.0f });
+                brain.BackPropagate(new float[] { 1, 1, 1, 0, 1 }, new float[] { -1.0f, -0.5f });
+                brain.BackPropagate(new float[] { 1, 0, 0, 1, 1 }, new float[] { 1.0f, 0.0f });
+                brain.BackPropagate(new float[] { 1, 0, 1, 1, 1 }, new float[] { 1.0f, -0.5f });
+                brain.BackPropagate(new float[] { 0, 1, 0, 1, 1 }, new float[] { 1, 0.0f });
+                brain.BackPropagate(new float[] { 1, 1, 0, 1, 0 }, new float[] { -1, 0.0f });
+                brain.BackPropagate(new float[] { 1, 1, 0, 1, 1 }, new float[] { 0, 0.5f });
+                brain.BackPropagate(new float[] { 1, 1, 1, 1, 1 }, new float[] { 0, -1 });*/
+
+
+
+            }
+            training = false;
+
+
 
             //Todo Reinforced Learning Training
         }
@@ -122,6 +143,9 @@ namespace Axel.NeuralNetworks
             //If the neural network is training proceed to Train with selected method.
             if (training)
                 Train();
+
+            if (Input.GetKeyDown(KeyCode.F1))
+                OnReset();
         }
     }
 }

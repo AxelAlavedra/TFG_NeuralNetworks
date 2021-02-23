@@ -5,49 +5,88 @@ using UnityEngine;
 
 namespace Axel.NeuralNetworks
 {
-    public class NeuralNetwork
+    [Serializable]
+    public struct NeuralNetworkConfig
     {
+        [Tooltip("The name identifier for this NN")]
+        [SerializeField]
+        public string identifier;
+        [Tooltip("The amount of input neurons the NN will use")]
+        [SerializeField]
+        public int inputSize;
+        [Tooltip("The amount of output neurons the NN will use")]
+        [SerializeField]
+        public int outputSize;
+        [Tooltip("The amount of neurons for each hidden Layer the NN will use")]
+        [SerializeField]
+        public int[] hiddenLayerSize;
+    }
+
+
+    [CreateAssetMenu(fileName = "NeuralNetwork", menuName = "Neural Networks/Neural Network")]
+    public class NeuralNetwork : ScriptableObject
+    {
+        [SerializeField]
         /// <summary>
         /// The configuration used on this Neural Network
         /// </summary>
-        public NeuralNetworkConfiguration config;
-
-        public float[][] neurons;
-        float[][] biases;
-        float[][][] weights;
+        public NeuralNetworkConfig config;
 
         [SerializeField]
-        float cost;
+        public int[] layers;
+        [SerializeField]
+        public float[][] neurons;
+        [SerializeField]
+        float[][] biases;
+        [SerializeField]
+        float[][][] weights;
+
+        float cost = 0;
         [SerializeField]
         float learningRate = 0.01f;
 
-        public NeuralNetwork(NeuralNetworkConfiguration NNConfig)
+        public void Init()
         {
-            config = NNConfig;
-            InitNeurons();
-            InitWeights();
-            InitBiases();
+            if(neurons == null)
+            {
+                InitLayers();
+                InitNeurons();
+                InitWeights();
+                InitBiases();
+            }
+        }
+
+        private void InitLayers()
+        {
+            //Create layers array for easier accessibility of amount of layers and their sizes.
+            layers = new int[2 + config.hiddenLayerSize.Length];
+            layers[0] = config.inputSize;
+            for (int i = 0; i < config.hiddenLayerSize.Length; i++)
+            {
+                layers[i + 1] = config.hiddenLayerSize[i];
+            }
+            layers[config.hiddenLayerSize.Length + 1] = config.outputSize;
         }
 
         private void InitNeurons()
         {
             //Create the neurons of the Neural Network based on the configuration established.
-            neurons = new float[config.layers.Length][];
-            for (int i = 0; i < config.layers.Length; i++)
+            neurons = new float[layers.Length][];
+            for (int i = 0; i < layers.Length; i++)
             {
-                neurons[i] = new float[config.layers[i]]; //Allocate memory for the neurons of this layers based on the config.
+                neurons[i] = new float[layers[i]]; //Allocate memory for the neurons of this layers based on the config.
             }
         }
 
         private void InitWeights()
         {
             //We create weights for each connection of each neuron in the hidden layers and output layer
-            weights = new float[config.layers.Length - 1][][]; // -1 since we dont need weights for Input Layer
-            for (int i = 1; i < config.layers.Length; i++)
+            weights = new float[layers.Length - 1][][]; // -1 since we dont need weights for Input Layer
+            for (int i = 1; i < layers.Length; i++)
             {
-                weights[i - 1] = new float[config.layers[i]][]; //Allocate memory for the amount of neurons in this layer
-                int neuronsInPreviousLayer = config.layers[i - 1]; //Obtain amount of neurons on previous layer so we know how many connections we need
-                for (int j = 0; j < config.layers[i]; j++) //Loop through each neuron of this layer
+                weights[i - 1] = new float[layers[i]][]; //Allocate memory for the amount of neurons in this layer
+                int neuronsInPreviousLayer = layers[i - 1]; //Obtain amount of neurons on previous layer so we know how many connections we need
+                for (int j = 0; j < layers[i]; j++) //Loop through each neuron of this layer
                 {
                     weights[i - 1][j] = new float[neuronsInPreviousLayer]; //Allocate memory for each weight required, based on the amount of neurons of previous layer
                     for (int k = 0; k < neuronsInPreviousLayer; k++) //Loop through each weight
@@ -61,11 +100,11 @@ namespace Axel.NeuralNetworks
         private void InitBiases()
         {
             //We create biases for each neuron in hidden layers and output layer.
-            biases = new float[config.layers.Length - 1][]; // -1 since we dont need biases for Input Layer
-            for (int i = 1; i < config.layers.Length; i++) //We start i = 1 since we dont need bias on our input layer neurons
+            biases = new float[layers.Length - 1][]; // -1 since we dont need biases for Input Layer
+            for (int i = 1; i < layers.Length; i++) //We start i = 1 since we dont need bias on our input layer neurons
             {
-                biases[i - 1] = new float[config.layers[i]]; //Allocate memory for the biases of this layer based on the size written in config
-                for(int j = 0; j < config.layers[i]; j++)
+                biases[i - 1] = new float[layers[i]]; //Allocate memory for the biases of this layer based on the size written in config
+                for(int j = 0; j < layers[i]; j++)
                 {
                     biases[i - 1][j] = UnityEngine.Random.Range(-.5f,.5f); //Initialize each bias with a random between -0.5f and 0.5f
                 }
@@ -87,7 +126,7 @@ namespace Axel.NeuralNetworks
             }
 
             //Feedforward
-            for (int i = 1; i < config.layers.Length; i++) //Iterate each layer of the network except the input
+            for (int i = 1; i < layers.Length; i++) //Iterate each layer of the network except the input
             {
                 for (int j = 0; j < neurons[i].Length; j++) //Iterate each neuron of the layer
                 {
@@ -123,34 +162,34 @@ namespace Axel.NeuralNetworks
 
             cost = 0;
             for (int i = 0; i < output.Length; i++) cost += (float)Math.Pow(output[i] - expected[i], 2);//calculated cost of network
-            cost = cost / 2;//this value is not used in calculions, rather used to identify the performance of the network
+            cost = cost / 2; //this value is not used in calculions, rather used to identify the performance of the network
 
             float[][] gamma;
 
 
             List<float[]> gammaList = new List<float[]>();
-            for (int i = 0; i < config.layers.Length; i++)
+            for (int i = 0; i < layers.Length; i++)
             {
-                gammaList.Add(new float[config.layers[i]]);
+                gammaList.Add(new float[layers[i]]);
             }
             gamma = gammaList.ToArray();//gamma initialization
 
-            int layer = config.layers.Length - 2;
-            for (int i = 0; i < output.Length; i++) gamma[config.layers.Length - 1][i] = (output[i] - expected[i]) * ActivateDerivative(output[i], "tanh");//Gamma calculation
-            for (int i = 0; i < config.layers[config.layers.Length - 1]; i++)//calculates the w' and b' for the last layer in the network
+            int layer = layers.Length - 2;
+            for (int i = 0; i < output.Length; i++) gamma[layers.Length - 1][i] = (output[i] - expected[i]) * ActivateDerivative(output[i], "tanh");//Gamma calculation
+            for (int i = 0; i < layers[layers.Length - 1]; i++)//calculates the w' and b' for the last layer in the network
             {
-                biases[config.layers.Length - 2][i] -= gamma[config.layers.Length - 1][i] * learningRate;
-                for (int j = 0; j < config.layers[config.layers.Length - 2]; j++)
+                biases[layers.Length - 2][i] -= gamma[layers.Length - 1][i] * learningRate;
+                for (int j = 0; j < layers[layers.Length - 2]; j++)
                 {
 
-                    weights[config.layers.Length - 2][i][j] -= gamma[config.layers.Length - 1][i] * neurons[config.layers.Length - 2][j] * learningRate;
+                    weights[layers.Length - 2][i][j] -= gamma[layers.Length - 1][i] * neurons[layers.Length - 2][j] * learningRate;
                 }
             }
 
-            for (int i = config.layers.Length - 2; i > 0; i--) //runs on all hidden layers
+            for (int i = layers.Length - 2; i > 0; i--) //runs on all hidden layers
             {
                 layer = i - 1;
-                for (int j = 0; j < config.layers[i]; j++) //outputs
+                for (int j = 0; j < layers[i]; j++) //outputs
                 {
                     gamma[i][j] = 0;
                     for (int k = 0; k < gamma[i + 1].Length; k++)
@@ -159,10 +198,10 @@ namespace Axel.NeuralNetworks
                     }
                     gamma[i][j] *= ActivateDerivative(neurons[i][j], "tanh"); //calculate gamma
                 }
-                for (int j = 0; j < config.layers[i]; j++) //itterate over outputs of layer
+                for (int j = 0; j < layers[i]; j++) //itterate over outputs of layer
                 {
                     biases[i - 1][j] -= gamma[i][j] * learningRate; //modify biases of network
-                    for (int k = 0; k < config.layers[i - 1]; k++) //iterate over inputs to layer
+                    for (int k = 0; k < layers[i - 1]; k++) //iterate over inputs to layer
                     {
                         weights[i - 1][j][k] -= gamma[i][j] * neurons[i - 1][k] * learningRate; //modify weights of network
                     }
@@ -183,6 +222,4 @@ namespace Axel.NeuralNetworks
             return ret; //Return the value calculated by the activation function
         }
     }
-
-
 }
