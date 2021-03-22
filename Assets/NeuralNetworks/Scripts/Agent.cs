@@ -14,10 +14,35 @@ namespace Axel.NeuralNetworks
         public bool playerControlled = false;
         [Tooltip("If the agent is training or not")]
         public bool training = false;
+        [Tooltip("If the agent actions are recorder or not")]
+        public bool record = false;
         [Tooltip("NN Graph for visualization of the Neural Network")]
         public NNGraph graph = null;
         [Tooltip("The neural network the agent is using")]
         public NeuralNetwork brain = null;
+
+        [System.Serializable]
+        public struct RecordPacket
+        {
+            public float[] input;
+            public float[] output;
+        }
+        [System.Serializable]
+        public struct RecordContainer
+        {
+            public List<RecordPacket> dataList;
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="_dataList">Data list value</param>
+            public RecordContainer(List<RecordPacket> _dataList)
+            {
+                dataList = _dataList;
+            }
+        }
+        public List<RecordPacket> records;
+
 
         //ToDo (Axel): Make NN initialization always be called, without having to call base Start on child class.
         protected virtual void Start()
@@ -29,6 +54,13 @@ namespace Axel.NeuralNetworks
             // ToDo (Axel): improve UI initialization
             if (graph != null)
                 graph.Initialize(brain);
+
+            if (record)
+                records = new List<RecordPacket>();
+
+            //If the neural network is training proceed to Train with selected method.
+            if (training)
+                Train();
         }
 
         /// <summary>
@@ -66,20 +98,38 @@ namespace Axel.NeuralNetworks
             throw new System.NotImplementedException("OnReset function was not implemented on child class");
         }
 
+        /// <summary>
+        /// Function to save the actions performed by the agent.
+        /// </summary>
+        /// <param name="input">Array to fill with inputs for the NN</param>
+        public virtual void SaveActions(float[] input, float[] output)
+        {
+            RecordPacket pkt;
+            pkt.input = new float[input.Length];
+            pkt.output = new float[output.Length];
+            input.CopyTo(pkt.input, 0);
+            output.CopyTo(pkt.output, 0);
+
+            records.Add(pkt);
+        }
+
         public void Train()
         {
-            for (int i = 0; i < 100000; i++)
+            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.persistentDataPath + "/Records/AgentRecording.json"));
+            for (int i = 0; i < 10000; i++)
             {
-                brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
+                foreach (var item in container.dataList)
+                {
+                    brain.BackPropagate(item.input, item.output);
+                }
+                /*brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
                 brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
                 brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
                 brain.BackPropagate(new float[] { 0, 0, 1 }, new float[] { 1, 1 });
                 brain.BackPropagate(new float[] { 1, 1, 0 }, new float[] { -1, 0 });
                 brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
                 brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
-                brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });
-
-
+                brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });*/
                 // Backpropagation
                 // 5 sensors
                 // sensor 0 right
@@ -108,44 +158,46 @@ namespace Axel.NeuralNetworks
                 brain.BackPropagate(new float[] { 1, 1, 0, 1, 0 }, new float[] { -1, 0.0f });
                 brain.BackPropagate(new float[] { 1, 1, 0, 1, 1 }, new float[] { 0, 0.5f });
                 brain.BackPropagate(new float[] { 1, 1, 1, 1, 1 }, new float[] { 0, -1 });*/
-
-
-
             }
             training = false;
-
-
-
-            //Todo Reinforced Learning Training
         }
 
         private void FixedUpdate()
         {
             float[] output = new float[brain.config.outputSize];
+            float[] input = new float[brain.config.inputSize];
+
+            //Gather the input from the agent (sensors and others)
+            AddObservationsInput(ref input);
 
             //If the agent is being player controlled, we use the player input as output for the agent behaviour.
             if (playerControlled)
                 AddPlayerInput(ref output);
             else
             {
-                float[] input = new float[brain.config.inputSize];
-
-                //Gather the input from the agent (sensors and others)
-                AddObservationsInput(ref input);
-
                 //Feed the input to the Neural Network to obtain an output
                 output = brain.FeedForward(input);
             }
 
+            if (record)
+                SaveActions(input, output);
+
             //Send output to the agent behaviour
             OnOutputReceived(output);
 
-            //If the neural network is training proceed to Train with selected method.
-            if (training)
-                Train();
-
             if (Input.GetKeyDown(KeyCode.F1))
                 OnReset();
+        }
+
+        private void OnApplicationQuit()
+        {
+            if(record)
+            {
+                RecordContainer container = new RecordContainer(records);
+                string json = JsonUtility.ToJson(container);
+                System.IO.File.WriteAllText(Application.persistentDataPath + "/Records/AgentRecording.json", json);
+            }
+           
         }
     }
 }

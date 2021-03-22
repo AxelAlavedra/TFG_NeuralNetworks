@@ -16,6 +16,6 @@ MonoBehaviour:
     identifier: CarNN
     inputSize: 3
     outputSize: 2
-    hiddenLayerSize: 03000000
-  layers: 030000000300000002000000
+    hiddenLayerSize: 0500000005000000
+  layers: 03000000050000000500000002000000
   learningRate: 0.01

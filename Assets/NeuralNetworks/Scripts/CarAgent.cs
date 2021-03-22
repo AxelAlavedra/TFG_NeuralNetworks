@@ -28,13 +28,12 @@ namespace Axel.NeuralNetworks
         [Tooltip("All the wheel transforms of the car")]
         public List<Transform> wheelTransforms;
         [SerializeField]
-        float steeringAngle, horizontalInput, brakeInput, verticalInput = .0f;
+        float horizontalInput, brakeInput, verticalInput = .0f;
 
         private List<WheelCollider> wheelColliders;
 
         private enum WheelPosition { FrontRight, RearRight, FrontLeft, RearLeft };
         private GameObject mainCamera;
-
 
 
         #region AgentFunctions
@@ -117,7 +116,7 @@ namespace Axel.NeuralNetworks
 
         private void Steer()
         {
-            steeringAngle = maxSteerAngle * horizontalInput;
+            float steeringAngle = maxSteerAngle * horizontalInput;
 
             wheelColliders[(int)WheelPosition.FrontLeft].steerAngle = steeringAngle;
             wheelColliders[(int)WheelPosition.FrontRight].steerAngle = steeringAngle;
