@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Axel.NeuralNetworks
             public float[] input;
             public float[] output;
         }
+
         [System.Serializable]
         public struct RecordContainer
         {
@@ -43,13 +45,24 @@ namespace Axel.NeuralNetworks
         }
         public List<RecordPacket> records;
 
-
         //ToDo (Axel): Make NN initialization always be called, without having to call base Start on child class.
         protected virtual void Start()
         {
             //NeuralNetworkConfiguration NNConfig = GetComponent<NeuralNetworkConfiguration>();
             if (brain != null)
-                brain.Init();
+            {
+                string filePath = Application.persistentDataPath + "/Brains/" + brain.config.identifier + ".json";
+                if(System.IO.File.Exists(filePath))
+                {
+                    string json = System.IO.File.ReadAllText(filePath);
+                    brain = JsonConvert.DeserializeObject<NeuralNetwork>(json);
+                    training = false;
+                } else
+                {
+                    brain.Init();
+                }
+            }
+
 
             // ToDo (Axel): improve UI initialization
             if (graph != null)
@@ -115,13 +128,15 @@ namespace Axel.NeuralNetworks
 
         public void Train()
         {
-            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.persistentDataPath + "/Records/AgentRecording.json"));
+            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.persistentDataPath + "/Records/" + brain.config.identifier + ".json"));
+            
             for (int i = 0; i < 10000; i++)
             {
                 foreach (var item in container.dataList)
                 {
                     brain.BackPropagate(item.input, item.output);
                 }
+
                 /*brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
                 brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
                 brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
@@ -130,6 +145,7 @@ namespace Axel.NeuralNetworks
                 brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
                 brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
                 brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });*/
+
                 // Backpropagation
                 // 5 sensors
                 // sensor 0 right
@@ -179,8 +195,12 @@ namespace Axel.NeuralNetworks
                 output = brain.FeedForward(input);
             }
 
+            
             if (record)
+            {
                 SaveActions(input, output);
+            }
+                
 
             //Send output to the agent behaviour
             OnOutputReceived(output);
@@ -191,13 +211,17 @@ namespace Axel.NeuralNetworks
 
         private void OnApplicationQuit()
         {
-            if(record)
+            string json;
+            if (record)
             {
                 RecordContainer container = new RecordContainer(records);
-                string json = JsonUtility.ToJson(container);
-                System.IO.File.WriteAllText(Application.persistentDataPath + "/Records/AgentRecording.json", json);
+                json = JsonUtility.ToJson(container);
+                System.IO.File.WriteAllText(Application.persistentDataPath + "/Records/" + brain.config.identifier + ".json", json);
             }
-           
+
+            json = JsonConvert.SerializeObject(brain);
+            System.IO.File.WriteAllText(Application.persistentDataPath + "/Brains/" + brain.config.identifier + ".json", json);
+            Debug.Log(json);
         }
     }
 }

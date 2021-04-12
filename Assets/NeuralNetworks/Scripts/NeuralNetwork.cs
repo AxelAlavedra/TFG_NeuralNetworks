@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,9 @@ namespace Axel.NeuralNetworks
         [Tooltip("The amount of neurons for each hidden Layer the NN will use")]
         [SerializeField]
         public int[] hiddenLayerSize;
+        [Tooltip("The learning rate for the network to use")]
+        [SerializeField]
+        public float learningRate;
     }
 
 
@@ -30,19 +34,20 @@ namespace Axel.NeuralNetworks
         /// <summary>
         /// The configuration used on this Neural Network
         /// </summary>
-        public NeuralNetworkConfig config;
-
-        [SerializeField]
+        public NeuralNetworkConfig config;     
+        
+        [JsonProperty]
         public int[] layers;
-        [SerializeField]
+        [JsonProperty]
         public float[][] neurons;
-        [SerializeField]
+        [JsonProperty]
         float[][] biases;
-        [SerializeField]
+        [JsonProperty]
         float[][][] weights;
 
+        [JsonProperty]
         float cost = 0;
-        [SerializeField]
+        [JsonProperty]
         float learningRate = 0.01f;
 
         public void Init()
@@ -66,6 +71,8 @@ namespace Axel.NeuralNetworks
                 layers[i + 1] = config.hiddenLayerSize[i];
             }
             layers[config.hiddenLayerSize.Length + 1] = config.outputSize;
+
+            learningRate = config.learningRate;
         }
 
         private void InitNeurons()

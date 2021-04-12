@@ -28,7 +28,7 @@ namespace Axel.NeuralNetworks
         private float distanceTravelled = 0.0f;
         [Tooltip("The current checkpoint index")]
         [SerializeField]
-        private int currentCheckpoint = 0;
+        private int currentCheckpoint = 1;
 
 
         private List<Vector3> checkpoints;
