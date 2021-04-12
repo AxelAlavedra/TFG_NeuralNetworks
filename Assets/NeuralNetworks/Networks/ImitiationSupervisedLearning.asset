@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   config:
     identifier: ImitiationSupervisedLearning
-    inputSize: 3
+    inputSize: 4
     outputSize: 2
-    hiddenLayerSize: 0a0000000a000000
+    hiddenLayerSize: 05000000
     learningRate: 0.01
-  layers: 030000000a0000000a00000002000000
+  layers: 040000000500000002000000

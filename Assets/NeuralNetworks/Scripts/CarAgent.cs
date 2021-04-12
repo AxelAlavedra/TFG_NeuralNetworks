@@ -34,6 +34,7 @@ namespace Axel.NeuralNetworks
 
         private enum WheelPosition { FrontRight, RearRight, FrontLeft, RearLeft };
         private GameObject mainCamera;
+        private Rigidbody rigidBody;
 
 
         #region AgentFunctions
@@ -51,7 +52,13 @@ namespace Axel.NeuralNetworks
 
         public override void AddObservationsInput(ref float[] input)
         {
-            input = raySensor.AnalyzeSensors(); //input of 0 means far from collider, input of 1 means close to collider
+            float[] sensorInput = raySensor.AnalyzeSensors(); //input of 0 means far from collider, input of 1 means close to collider
+            for(int i = 0; i < sensorInput.Length; i++)
+            {
+                input[i] = sensorInput[i];
+            }
+
+            input[sensorInput.Length] = rigidBody.velocity.magnitude;
         }
 
         public override void AddPlayerInput(ref float[] input)
@@ -75,7 +82,7 @@ namespace Axel.NeuralNetworks
             wheelColliders[(int)WheelPosition.FrontLeft].steerAngle = 0;
             wheelColliders[(int)WheelPosition.FrontRight].steerAngle = 0;
 
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            rigidBody.velocity = Vector3.zero;
             UpdateWheelPoses();
         }
         #endregion
@@ -86,6 +93,7 @@ namespace Axel.NeuralNetworks
             base.Start();
 
             mainCamera = Camera.main.gameObject;
+            rigidBody = GetComponent<Rigidbody>();
 
             startPosition = transform.position;
             startRotation = transform.rotation;

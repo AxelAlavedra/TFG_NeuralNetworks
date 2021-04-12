@@ -35,6 +35,10 @@ namespace Axel.NeuralNetworks
         private Vector3 currentPositionOnPath;
         private Vector3 directionOfPath;
 
+        float lapTime = 0.0f;
+        float totalTime = 0.0f;
+        float bestLapTime = 999.0f;
+
 
         // Start is called before the first frame update
         void Start()
@@ -68,8 +72,20 @@ namespace Axel.NeuralNetworks
             {
                 currentCheckpoint++;
                 if (currentCheckpoint >= checkpoints.Count)
+                {
+                    if (lapTime < bestLapTime)
+                        bestLapTime = lapTime;
+
                     currentCheckpoint = 0;
+                    lapTime = 0.0f;
+                }
             }
+        }
+
+        private void FixedUpdate()
+        {
+            lapTime += Time.fixedDeltaTime;
+            totalTime += Time.fixedDeltaTime;
         }
 
         private void OnDrawGizmos()
@@ -100,6 +116,25 @@ namespace Axel.NeuralNetworks
                   Gizmos.DrawSphere(wPos, debugSphereRadius);
               }*/
 
+
+        }
+
+        private void OnGUI()
+        {
+            string minutes = Mathf.Floor(lapTime / 60).ToString("00");
+            string seconds = (lapTime % 60).ToString("00");
+            GUI.Label(new Rect(10, 10, 150, 20), "Lap Time: " + string.Format("{0}:{1}", minutes, seconds));
+
+            minutes = Mathf.Floor(totalTime / 60).ToString("00");
+            seconds = (totalTime % 60).ToString("00");
+            GUI.Label(new Rect(10, 40, 150, 20), "Total Time: " + string.Format("{0}:{1}", minutes, seconds));
+
+            if(bestLapTime < 999.0f)
+            {
+                minutes = Mathf.Floor(bestLapTime / 60).ToString("00");
+                seconds = (bestLapTime % 60).ToString("00");
+                GUI.Label(new Rect(10, 70, 150, 20), "Best Lap: " + string.Format("{0}:{1}", minutes, seconds));
+            }
 
         }
     }

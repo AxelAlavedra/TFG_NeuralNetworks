@@ -22,6 +22,8 @@ namespace Axel.NeuralNetworks
         [Tooltip("The neural network the agent is using")]
         public NeuralNetwork brain = null;
 
+        bool save = false;
+
         [System.Serializable]
         public struct RecordPacket
         {
@@ -57,7 +59,8 @@ namespace Axel.NeuralNetworks
                     string json = System.IO.File.ReadAllText(filePath);
                     brain = JsonConvert.DeserializeObject<NeuralNetwork>(json);
                     training = false;
-                } else
+                } 
+                else
                 {
                     brain.Init();
                 }
@@ -128,7 +131,7 @@ namespace Axel.NeuralNetworks
 
         public void Train()
         {
-            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.persistentDataPath + "/Records/" + brain.config.identifier + ".json"));
+            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.dataPath + "/NeuralNetworks/JSON/Records/" + brain.config.identifier + ".json"));
             
             for (int i = 0; i < 10000; i++)
             {
@@ -176,6 +179,7 @@ namespace Axel.NeuralNetworks
                 brain.BackPropagate(new float[] { 1, 1, 1, 1, 1 }, new float[] { 0, -1 });*/
             }
             training = false;
+            save = true;
         }
 
         private void FixedUpdate()
@@ -216,12 +220,14 @@ namespace Axel.NeuralNetworks
             {
                 RecordContainer container = new RecordContainer(records);
                 json = JsonUtility.ToJson(container);
-                System.IO.File.WriteAllText(Application.persistentDataPath + "/Records/" + brain.config.identifier + ".json", json);
+                System.IO.File.WriteAllText(Application.dataPath + "/NeuralNetworks/JSON/Records/" + brain.config.identifier + ".json", json);
             }
-
-            json = JsonConvert.SerializeObject(brain);
-            System.IO.File.WriteAllText(Application.persistentDataPath + "/Brains/" + brain.config.identifier + ".json", json);
-            Debug.Log(json);
+            
+            if(save)
+            {
+                json = JsonConvert.SerializeObject(brain);
+                System.IO.File.WriteAllText(Application.persistentDataPath + "/NeuralNetworks/JSON/Brains/" + brain.config.identifier + ".json", json);
+            }
         }
     }
 }
