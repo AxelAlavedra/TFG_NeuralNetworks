@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
+using System;
 
 namespace Axel.NeuralNetworks
 {
@@ -23,6 +24,8 @@ namespace Axel.NeuralNetworks
         [Tooltip("The distance to the next checkpoint to reach")]
         [SerializeField]
         private float distanceToCheckpoint = 0.0f;
+        [Tooltip("The direction to the next checkpoint to reach")]
+        private Vector3 directionToCheckpoint;
         [Tooltip("The distance travelled so far")]
         [SerializeField]
         private float distanceTravelled = 0.0f;
@@ -30,6 +33,10 @@ namespace Axel.NeuralNetworks
         [SerializeField]
         private int currentCheckpoint = 1;
 
+        public float DistanceToCheckpoint { get { return distanceToCheckpoint; } }
+        public Vector3 DirectionToCheckpoint { get { return directionToCheckpoint; } }
+        public delegate void OnCheckpointReached();
+        public OnCheckpointReached checkpointReached = null;
 
         private List<Vector3> checkpoints;
         private Vector3 currentPositionOnPath;
@@ -39,7 +46,7 @@ namespace Axel.NeuralNetworks
         float totalTime = 0.0f;
         float bestLapTime = 999.0f;
 
-
+        
         // Start is called before the first frame update
         void Start()
         {
@@ -66,10 +73,12 @@ namespace Axel.NeuralNetworks
 
             //Metrics calculation without pathcreator
             distanceToCheckpoint = Vector3.Distance(agentGO.transform.position, checkpoints[currentCheckpoint]);
+            directionToCheckpoint = (checkpoints[currentCheckpoint] - agentGO.transform.position).normalized;
 
             //Check if the current checkpoint has been reached, if so, increment checkpoint
             if (distanceToCheckpoint < checkpointMinDistance)
             {
+                checkpointReached?.Invoke();
                 currentCheckpoint++;
                 if (currentCheckpoint >= checkpoints.Count)
                 {
@@ -86,6 +95,12 @@ namespace Axel.NeuralNetworks
         {
             lapTime += Time.fixedDeltaTime;
             totalTime += Time.fixedDeltaTime;
+        }
+
+        internal void Reset()
+        {
+            lapTime = totalTime = bestLapTime = 0.0f;
+            currentCheckpoint = 1;
         }
 
         private void OnDrawGizmos()
