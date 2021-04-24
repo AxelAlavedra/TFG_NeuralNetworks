@@ -57,7 +57,7 @@ namespace Axel.NeuralNetworks
             return rayInputs;
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             if (rays == 1)
             {
