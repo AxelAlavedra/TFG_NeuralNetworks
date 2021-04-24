@@ -53,7 +53,7 @@ namespace Axel.NeuralNetworks
             //NeuralNetworkConfiguration NNConfig = GetComponent<NeuralNetworkConfiguration>();
             if (brain != null)
             {
-                string filePath = Application.persistentDataPath + "/Brains/" + brain.config.identifier + ".json";
+                string filePath = Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Brains/" + brain.config.identifier + ".json";
                 if(System.IO.File.Exists(filePath))
                 {
                     string json = System.IO.File.ReadAllText(filePath);
@@ -131,9 +131,9 @@ namespace Axel.NeuralNetworks
 
         public void Train()
         {
-            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.dataPath + "/NeuralNetworks/JSON/Records/" + brain.config.identifier + ".json"));
+            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Records/" + brain.config.identifier + ".json"));
             
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 foreach (var item in container.dataList)
                 {
@@ -220,13 +220,13 @@ namespace Axel.NeuralNetworks
             {
                 RecordContainer container = new RecordContainer(records);
                 json = JsonUtility.ToJson(container);
-                System.IO.File.WriteAllText(Application.dataPath + "/NeuralNetworks/JSON/Records/" + brain.config.identifier + ".json", json);
+                System.IO.File.WriteAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Records/" + brain.config.identifier + ".json", json);
             }
             
             if(save)
             {
                 json = JsonConvert.SerializeObject(brain);
-                System.IO.File.WriteAllText(Application.persistentDataPath + "/NeuralNetworks/JSON/Brains/" + brain.config.identifier + ".json", json);
+                System.IO.File.WriteAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Brains/" + brain.config.identifier + ".json", json);
             }
         }
     }

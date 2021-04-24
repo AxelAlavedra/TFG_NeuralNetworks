@@ -29,6 +29,7 @@ namespace Axel.NeuralNetworks
         [Tooltip("The distance travelled so far")]
         [SerializeField]
         private float distanceTravelled = 0.0f;
+
         [Tooltip("The current checkpoint index")]
         [SerializeField]
         private int currentCheckpoint = 1;
@@ -78,16 +79,7 @@ namespace Axel.NeuralNetworks
             //Check if the current checkpoint has been reached, if so, increment checkpoint
             if (distanceToCheckpoint < checkpointMinDistance)
             {
-                checkpointReached?.Invoke();
-                currentCheckpoint++;
-                if (currentCheckpoint >= checkpoints.Count)
-                {
-                    if (lapTime < bestLapTime)
-                        bestLapTime = lapTime;
-
-                    currentCheckpoint = 0;
-                    lapTime = 0.0f;
-                }
+                CheckpointReached();
             }
         }
 
@@ -101,6 +93,37 @@ namespace Axel.NeuralNetworks
         {
             lapTime = totalTime = bestLapTime = 0.0f;
             currentCheckpoint = 1;
+        }
+
+        private void CheckpointReached()
+        {
+            currentCheckpoint++;
+            if (currentCheckpoint >= checkpoints.Count)
+            {
+                if (lapTime < bestLapTime)
+                    bestLapTime = lapTime;
+
+                currentCheckpoint = 0;
+                lapTime = 0.0f;
+            }
+
+            checkpointReached?.Invoke();
+        }
+
+        internal void AssignRandomCheckpoint(out Vector3 newPosition, out Quaternion newRotation)
+        {
+            int newCheckpoint = UnityEngine.Random.Range(0, checkpoints.Count - 1);
+            currentCheckpoint = newCheckpoint + 1;
+            if (currentCheckpoint >= checkpoints.Count)
+                currentCheckpoint = 0;
+
+            float r = (checkpointMinDistance - 0.5f) * Mathf.Sqrt(UnityEngine.Random.Range(0.0f, 1.0f));
+            float theta = UnityEngine.Random.Range(0.0f, 1.0f) * 2.0f * Mathf.PI;
+            newPosition = checkpoints[newCheckpoint] + new Vector3(r * Mathf.Cos(theta), 0.0f, r * Mathf.Sin(theta));
+
+            float checkpointDistance = pathCreator.path.GetClosestDistanceAlongPath(newPosition);
+            Vector3 checkpointForward = pathCreator.path.GetDirectionAtDistance(checkpointDistance, EndOfPathInstruction.Loop);
+            newRotation = Quaternion.LookRotation(checkpointForward);
         }
 
         private void OnDrawGizmos()
@@ -119,11 +142,10 @@ namespace Axel.NeuralNetworks
                 Gizmos.color = Color.cyan;
                 Gizmos.DrawWireSphere(checkpointWorldPos, checkpointMinDistance);
             }
-
-            bool outOfCircuit = Vector3.Distance(agentGO.transform.position, currentPositionOnPath) > checkpointMinDistance;
+            /*bool outOfCircuit = Vector3.Distance(agentGO.transform.position, currentPositionOnPath) > checkpointMinDistance;
             Gizmos.color = outOfCircuit ? Color.red : Color.blue;
             Gizmos.DrawSphere(currentPositionOnPath, debugSphereRadius);
-            Gizmos.DrawLine(currentPositionOnPath + Vector3.up * 0.5f, (currentPositionOnPath + Vector3.up * 0.5f) + (directionOfPath * 2f));
+            Gizmos.DrawLine(currentPositionOnPath + Vector3.up * 0.5f, (currentPositionOnPath + Vector3.up * 0.5f) + (directionOfPath * 2f));*/
 
             /*for (int i = 0; i < pathCreator.bezierPath.NumAnchorPoints; i++)
               {

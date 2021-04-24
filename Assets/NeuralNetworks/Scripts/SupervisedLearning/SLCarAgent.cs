@@ -32,7 +32,7 @@ namespace Axel.NeuralNetworks
                 input[i] = sensorInput[i];
             }
 
-            input[sensorInput.Length] = carMovement.rigidBody.velocity.magnitude;
+           // input[sensorInput.Length] = carMovement.rigidBody.velocity.magnitude;
         }
 
         public override void AddPlayerInput(ref float[] input)
