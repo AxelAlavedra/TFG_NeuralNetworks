@@ -17,10 +17,12 @@ namespace Axel.NeuralNetworks
         public bool training = false;
         [Tooltip("If the agent actions are recorder or not")]
         public bool record = false;
-        [Tooltip("NN Graph for visualization of the Neural Network")]
-        public NNGraph graph = null;
         [Tooltip("The neural network the agent is using")]
         public NeuralNetwork brain = null;
+        [Tooltip("The iterations performed for training")]
+        public int iterations = 10000;
+        [Tooltip("If the training is performed with data from a recording")]
+        public bool trainFromRecord = false;
 
         bool save = false;
 
@@ -65,11 +67,6 @@ namespace Axel.NeuralNetworks
                     brain.Init();
                 }
             }
-
-
-            // ToDo (Axel): improve UI initialization
-            if (graph != null)
-                graph.Initialize(brain);
 
             if (record)
                 records = new List<RecordPacket>();
@@ -133,21 +130,26 @@ namespace Axel.NeuralNetworks
         {
             RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Records/" + brain.config.identifier + ".json"));
             
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < iterations; i++)
             {
-                foreach (var item in container.dataList)
+                if(trainFromRecord)
                 {
-                    brain.BackPropagate(item.input, item.output);
+                    foreach (var item in container.dataList)
+                    {
+                        brain.BackPropagate(item.input, item.output);
+                    }
                 }
-
-                /*brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
-                brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
-                brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
-                brain.BackPropagate(new float[] { 0, 0, 1 }, new float[] { 1, 1 });
-                brain.BackPropagate(new float[] { 1, 1, 0 }, new float[] { -1, 0 });
-                brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
-                brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
-                brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });*/
+                else
+                {
+                    brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
+                    brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
+                    brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
+                    brain.BackPropagate(new float[] { 0, 0, 1 }, new float[] { 1, 1 });
+                    brain.BackPropagate(new float[] { 1, 1, 0 }, new float[] { -1, 0 });
+                    brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
+                    brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
+                    brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });
+                }
 
                 // Backpropagation
                 // 5 sensors

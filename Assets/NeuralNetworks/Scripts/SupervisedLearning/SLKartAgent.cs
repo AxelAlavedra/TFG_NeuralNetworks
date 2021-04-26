@@ -8,8 +8,11 @@ namespace Axel.NeuralNetworks
     {
         Vector3 startPosition;
         Quaternion startRotation;
+
+        [Header("Kart Agent")]
         public RaySensor raySensor;
         public KartMovement kartMovement;
+        public CheckpointHandler checkpointHandler;
 
         #region AgentFunctions
         public override void OnOutputReceived(float[] output)
@@ -50,8 +53,8 @@ namespace Axel.NeuralNetworks
         {
             base.Start();
 
-            startPosition = transform.position;
-            startRotation = transform.rotation;
+            checkpointHandler.AssignStartCheckpoint(out startPosition, out startRotation);
+            kartMovement.Reset(startPosition, startRotation);
         }
     }
 }

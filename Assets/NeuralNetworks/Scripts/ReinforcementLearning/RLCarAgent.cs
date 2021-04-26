@@ -14,8 +14,6 @@ public class RLCarAgent : Agent
     public CheckpointHandler checkpointHandler;
     private KartMovement kartMovement;
 
-    private Vector3 startPosition;
-    private Quaternion startRotation;
     private float distanceTravelled = 0.0f;
 
     /// <summary>
@@ -35,14 +33,15 @@ public class RLCarAgent : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
-        if(trainingMode)
-        {
-            Vector3 newPosition;
-            Quaternion newRotation;
-            checkpointHandler.AssignRandomCheckpoint(out newPosition, out newRotation);
+        Vector3 newPosition;
+        Quaternion newRotation;
 
-            kartMovement.Reset(newPosition, newRotation);
-        }
+        if (trainingMode)
+            checkpointHandler.AssignRandomCheckpoint(out newPosition, out newRotation);
+        else
+            checkpointHandler.AssignStartCheckpoint(out newPosition, out newRotation);
+
+        kartMovement.Reset(newPosition, newRotation);
     }
 
     /// <summary>

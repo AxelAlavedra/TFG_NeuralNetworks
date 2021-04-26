@@ -40,16 +40,15 @@ namespace Axel.NeuralNetworks
         public OnCheckpointReached checkpointReached = null;
 
         private List<Vector3> checkpoints;
-        private Vector3 currentPositionOnPath;
-        private Vector3 directionOfPath;
 
         float lapTime = 0.0f;
+
         float totalTime = 0.0f;
         float bestLapTime = 999.0f;
 
         
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
             checkpoints = new List<Vector3>();
 
@@ -97,14 +96,18 @@ namespace Axel.NeuralNetworks
 
         private void CheckpointReached()
         {
-            currentCheckpoint++;
-            if (currentCheckpoint >= checkpoints.Count)
+            if(currentCheckpoint == 0)
             {
                 if (lapTime < bestLapTime)
                     bestLapTime = lapTime;
 
-                currentCheckpoint = 0;
                 lapTime = 0.0f;
+            }
+
+            currentCheckpoint++;
+            if (currentCheckpoint >= checkpoints.Count)
+            {
+                currentCheckpoint = 0;
             }
 
             checkpointReached?.Invoke();
@@ -124,6 +127,16 @@ namespace Axel.NeuralNetworks
             float checkpointDistance = pathCreator.path.GetClosestDistanceAlongPath(newPosition);
             Vector3 checkpointForward = pathCreator.path.GetDirectionAtDistance(checkpointDistance, EndOfPathInstruction.Loop);
             newRotation = Quaternion.LookRotation(checkpointForward);
+        }
+
+        internal void AssignStartCheckpoint(out Vector3 startPosition, out Quaternion startRotation)
+        {
+            currentCheckpoint = 1;
+            startPosition = checkpoints[0];
+
+            float checkpointDistance = 0;
+            Vector3 checkpointForward = pathCreator.path.GetDirectionAtDistance(checkpointDistance, EndOfPathInstruction.Loop);
+            startRotation = Quaternion.LookRotation(checkpointForward);
         }
 
         private void OnDrawGizmos()
