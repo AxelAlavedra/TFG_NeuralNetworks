@@ -7,10 +7,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3200084411432968002, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: rays
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3200084411432968002, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: degrees
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 3200084411432968002, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: rayLength
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 3923346835510434523, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
       propertyPath: m_Name
-      value: ImitationPlayer
+      value: SLPlayerDataPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 3923346835510434525, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
@@ -20,7 +35,7 @@ PrefabInstance:
     - target: {fileID: 3923346835510434525, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.233
+      value: 13.48
       objectReference: {fileID: 0}
     - target: {fileID: 3923346835510434525, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
@@ -30,7 +45,7 @@ PrefabInstance:
     - target: {fileID: 3923346835510434525, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 43.579
+      value: 53.82
       objectReference: {fileID: 0}
     - target: {fileID: 3923346835510434525, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
@@ -71,7 +86,22 @@ PrefabInstance:
         type: 3}
       propertyPath: brain
       value: 
-      objectReference: {fileID: 11400000, guid: 5d0d2c33666fe4f4683d76b8d146ee50,
+      objectReference: {fileID: 11400000, guid: 743419d17e9f03a48bd18f31a698c391,
         type: 2}
+    - target: {fileID: 8759233796690049044, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: dataFile
+      value: 
+      objectReference: {fileID: 4900000, guid: 086a693a173737d4ab3826b97aa3493a, type: 3}
+    - target: {fileID: 8759233796690049044, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: training
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8759233796690049044, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: iterations
+      value: 100000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd50fa708ef11644c8ed7044d4f65181, type: 3}

@@ -37,9 +37,9 @@ namespace Axel.NeuralNetworks
         public NeuralNetworkConfig config;     
         
         [JsonProperty]
-        public int[] layers;
+        int[] layers;
         [JsonProperty]
-        public float[][] neurons;
+        float[][] neurons;
         [JsonProperty]
         float[][] biases;
         [JsonProperty]
@@ -52,13 +52,10 @@ namespace Axel.NeuralNetworks
 
         public void Init()
         {
-            if(neurons == null)
-            {
-                InitLayers();
-                InitNeurons();
-                InitWeights();
-                InitBiases();
-            }
+            InitLayers();
+            InitNeurons();
+            InitWeights();
+            InitBiases();
         }
 
         private void InitLayers()
@@ -169,7 +166,7 @@ namespace Axel.NeuralNetworks
 
             cost = 0;
             for (int i = 0; i < output.Length; i++) cost += (float)Math.Pow(output[i] - expected[i], 2);//calculated cost of network
-            cost = cost / 2; //this value is not used in calculions, rather used to identify the performance of the network
+            cost = cost / 2; //this value is not used in calculations, rather used to identify the performance of the network
 
             float[][] gamma;
 
@@ -182,7 +179,7 @@ namespace Axel.NeuralNetworks
             gamma = gammaList.ToArray();//gamma initialization
 
             int layer = layers.Length - 2;
-            for (int i = 0; i < output.Length; i++) gamma[layers.Length - 1][i] = (output[i] - expected[i]) * ActivateDerivative(output[i], "tanh");//Gamma calculation
+            for (int i = 0; i < output.Length; i++) gamma[layers.Length - 1][i] = (output[i] - expected[i]) * ActivateDerivative(output[i], "tanh"); //Gamma calculation
             for (int i = 0; i < layers[layers.Length - 1]; i++)//calculates the w' and b' for the last layer in the network
             {
                 biases[layers.Length - 2][i] -= gamma[layers.Length - 1][i] * learningRate;

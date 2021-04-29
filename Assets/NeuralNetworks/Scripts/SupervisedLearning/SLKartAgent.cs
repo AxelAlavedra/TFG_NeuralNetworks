@@ -15,7 +15,7 @@ namespace Axel.NeuralNetworks
         public CheckpointHandler checkpointHandler;
 
         #region AgentFunctions
-        public override void OnOutputReceived(float[] output)
+        protected override void OnOutputReceived(float[] output)
         {
             // output 0 horizontal input - steer
             // output 1 vertical input - accelerate
@@ -25,7 +25,7 @@ namespace Axel.NeuralNetworks
             kartMovement.SetInputs(verticalInput, horizontalInput);
         }
 
-        public override void AddObservationsInput(ref float[] input)
+        protected override void AddObservationsInput(ref float[] input)
         {
             float[] sensorInput = raySensor.AnalyzeSensors(); //input of 0 means far from collider, input of 1 means close to collider
             for (int i = 0; i < sensorInput.Length; i++)
@@ -36,13 +36,13 @@ namespace Axel.NeuralNetworks
             //input[sensorInput.Length] = kartMovement.sphere.velocity.magnitude;
         }
 
-        public override void AddPlayerInput(ref float[] input)
+        protected override void AddPlayerInput(ref float[] input)
         {
             input[0] = Input.GetAxis("Horizontal");
             input[1] = Input.GetAxis("Vertical");
         }
 
-        public override void OnReset()
+        protected override void OnReset()
         {
             kartMovement.Reset(startPosition, startRotation);
         }

@@ -16,43 +16,27 @@ namespace Axel.NeuralNetworks
         [Tooltip("If the agent is training or not")]
         public bool training = false;
         [Tooltip("If the agent actions are recorder or not")]
-        public bool record = false;
+        public bool recordActions = false;
         [Tooltip("The neural network the agent is using")]
         public NeuralNetwork brain = null;
+        [Tooltip("The data file used for training")]
+        public TextAsset dataFile = null;
         [Tooltip("The iterations performed for training")]
         public int iterations = 10000;
-        [Tooltip("If the training is performed with data from a recording")]
-        public bool trainFromRecord = false;
 
         bool save = false;
 
         [System.Serializable]
-        public struct RecordPacket
+        public struct DataPacket
         {
             public float[] input;
             public float[] output;
         }
+        [JsonProperty]
+        List<DataPacket> data;
 
-        [System.Serializable]
-        public struct RecordContainer
-        {
-            public List<RecordPacket> dataList;
-
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            /// <param name="_dataList">Data list value</param>
-            public RecordContainer(List<RecordPacket> _dataList)
-            {
-                dataList = _dataList;
-            }
-        }
-        public List<RecordPacket> records;
-
-        //ToDo (Axel): Make NN initialization always be called, without having to call base Start on child class.
         protected virtual void Start()
         {
-            //NeuralNetworkConfiguration NNConfig = GetComponent<NeuralNetworkConfiguration>();
             if (brain != null)
             {
                 string filePath = Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Brains/" + brain.config.identifier + ".json";
@@ -68,8 +52,8 @@ namespace Axel.NeuralNetworks
                 }
             }
 
-            if (record)
-                records = new List<RecordPacket>();
+            if (recordActions)
+                data = new List<DataPacket>();
 
             //If the neural network is training proceed to Train with selected method.
             if (training)
@@ -80,7 +64,7 @@ namespace Axel.NeuralNetworks
         /// Function to add the inputs required for the Neural Network of this behaviour to work.
         /// </summary>
         /// <param name="input">Array to fill with inputs for the NN</param>
-        public virtual void AddObservationsInput(ref float[] input)
+        protected virtual void AddObservationsInput(ref float[] input)
         {
             throw new System.NotImplementedException("AddInput function was not implemented on child class");
         }
@@ -89,7 +73,7 @@ namespace Axel.NeuralNetworks
         /// Function gets called when an output for the agent behaviour has been obtained. This output can be NN or Player.
         /// </summary>
         /// <param name="output">The output arrray of the Agent</param>
-        public virtual void OnOutputReceived(float[] output)
+        protected virtual void OnOutputReceived(float[] output)
         {
             throw new System.NotImplementedException("OnOutputReceived function was not implemented on child class");
         }
@@ -98,7 +82,7 @@ namespace Axel.NeuralNetworks
         /// Function to add inputs of the Player to the Agent behaviour. OnOutputReceived gets called with this input.
         /// </summary>
         /// <param name="input"></param>
-        public virtual void AddPlayerInput(ref float[] input)
+        protected virtual void AddPlayerInput(ref float[] input)
         {
             throw new System.NotImplementedException("PlayerInput function was not implemented on child class");
         }
@@ -106,7 +90,7 @@ namespace Axel.NeuralNetworks
         /// <summary>
         /// Function that gets called when the cycle of training ends, so the Agent can get reset to original state and start training again.
         /// </summary>
-        public virtual void OnReset()
+        protected virtual void OnReset()
         {
             throw new System.NotImplementedException("OnReset function was not implemented on child class");
         }
@@ -115,41 +99,45 @@ namespace Axel.NeuralNetworks
         /// Function to save the actions performed by the agent.
         /// </summary>
         /// <param name="input">Array to fill with inputs for the NN</param>
-        public virtual void SaveActions(float[] input, float[] output)
+        protected virtual void SaveActions(float[] input, float[] output)
         {
-            RecordPacket pkt;
+            DataPacket pkt;
             pkt.input = new float[input.Length];
             pkt.output = new float[output.Length];
             input.CopyTo(pkt.input, 0);
             output.CopyTo(pkt.output, 0);
 
-            records.Add(pkt);
+            data.Add(pkt);
         }
 
-        public void Train()
+        /// <summary>
+        /// Method that will perform the selected method of Supervised Learning training
+        /// </summary>
+        protected virtual void Train()
         {
-            RecordContainer container = JsonUtility.FromJson<RecordContainer>(System.IO.File.ReadAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Records/" + brain.config.identifier + ".json"));
+            string json = dataFile.text;
+            List<DataPacket> container = JsonConvert.DeserializeObject<List<DataPacket>>(json);
+            if(container ==  null)
+            {
+                Debug.LogError("No training data linked to the Agent. Can't perform training");
+            }
             
             for (int i = 0; i < iterations; i++)
             {
-                if(trainFromRecord)
+                foreach (var item in container)
                 {
-                    foreach (var item in container.dataList)
-                    {
-                        brain.BackPropagate(item.input, item.output);
-                    }
+                    brain.BackPropagate(item.input, item.output);
                 }
-                else
-                {
-                    brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
-                    brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
-                    brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
-                    brain.BackPropagate(new float[] { 0, 0, 1 }, new float[] { 1, 1 });
-                    brain.BackPropagate(new float[] { 1, 1, 0 }, new float[] { -1, 0 });
-                    brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
-                    brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
-                    brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });
-                }
+
+
+                //brain.BackPropagate(new float[] { 0, 0, 0 }, new float[] { 0, 1 });
+                //brain.BackPropagate(new float[] { 1, 0, 0 }, new float[] { -1, 1 });
+                //brain.BackPropagate(new float[] { 0, 1, 0 }, new float[] { 0, -1 });
+                //brain.BackPropagate(new float[] { 0, 0, 1 }, new float[] { 1, 1 });
+                //brain.BackPropagate(new float[] { 1, 1, 0 }, new float[] { -1, 0 });
+                //brain.BackPropagate(new float[] { 0, 1, 1 }, new float[] { 1, 0 });
+                //brain.BackPropagate(new float[] { 1, 0, 1 }, new float[] { 0, 0.75f });
+                //brain.BackPropagate(new float[] { 1, 1, 1 }, new float[] { 0, -1 });
 
                 // Backpropagation
                 // 5 sensors
@@ -184,6 +172,7 @@ namespace Axel.NeuralNetworks
             save = true;
         }
 
+
         private void FixedUpdate()
         {
             float[] output = new float[brain.config.outputSize];
@@ -202,7 +191,7 @@ namespace Axel.NeuralNetworks
             }
 
             
-            if (record)
+            if (recordActions)
             {
                 SaveActions(input, output);
             }
@@ -218,11 +207,10 @@ namespace Axel.NeuralNetworks
         private void OnApplicationQuit()
         {
             string json;
-            if (record)
+            if (recordActions)
             {
-                RecordContainer container = new RecordContainer(records);
-                json = JsonUtility.ToJson(container);
-                System.IO.File.WriteAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/Records/" + brain.config.identifier + ".json", json);
+                json = JsonConvert.SerializeObject(data);
+                System.IO.File.WriteAllText(Application.dataPath + "/NeuralNetworks/NN/SupervisedLearning/TrainingData/" + brain.config.identifier + ".json", json);
             }
             
             if(save)
