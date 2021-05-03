@@ -34,6 +34,9 @@ public class KartMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F1))
+            firstPersonCamera = !firstPersonCamera;
+
         if (firstPersonCamera && mainCamera.activeInHierarchy)
             mainCamera.SetActive(false);
         else if (!firstPersonCamera && !mainCamera.activeInHierarchy)

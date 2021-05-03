@@ -56,16 +56,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 10
+    VectorObservationSize: 8
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 3
+      m_NumContinuousActions: 2
       BranchSizes: 
-    VectorActionSize: 03000000
+    VectorActionSize: 02000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: b1f893daef4e00140aebe48646c79f0f, type: 3}
   m_InferenceDevice: 2
   m_BehaviorType: 0
   m_BehaviorName: KartBehavior
@@ -89,7 +89,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 5000
-  trainingMode: 1
+  trainingMode: 0
   checkpointHandler: {fileID: 0}
 --- !u!1 &8295474772147602845
 GameObject:
@@ -195,37 +195,37 @@ PrefabInstance:
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.28
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 18.96
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.3259113
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.000000004128035
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.9454004
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 0.000000008181127
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
@@ -235,7 +235,7 @@ PrefabInstance:
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -141.95801
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
@@ -265,7 +265,7 @@ PrefabInstance:
     - target: {fileID: 8814656821396983634, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: firstPersonCamera
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821396983635, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
@@ -275,6 +275,21 @@ PrefabInstance:
     - target: {fileID: 8814656821396983635, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8814656821396983635, guid: 08d4e60d91eb8394b88f7e457d1e1365,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8814656821396983635, guid: 08d4e60d91eb8394b88f7e457d1e1365,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8814656821396983635, guid: 08d4e60d91eb8394b88f7e457d1e1365,
+        type: 3}
+      propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821951258691, guid: 08d4e60d91eb8394b88f7e457d1e1365,
