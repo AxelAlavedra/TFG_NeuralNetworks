@@ -74,10 +74,10 @@ public class RLCarAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Observe the agent's local rotation (4 observations)
-        sensor.AddObservation(transform.localRotation.normalized);
+        //sensor.AddObservation(transform.localRotation.normalized);
 
-        // Observe the agent's velocity (1 observations)
-        sensor.AddObservation(kartMovement.sphere.velocity.magnitude);
+        // Observe the agent's speed (3 observations)
+        sensor.AddObservation(kartMovement.sphere.velocity.normalized);
 
         // Observe distance to current checkpoint (1 observation)
         sensor.AddObservation(checkpointHandler.DistanceToCheckpoint);
@@ -88,7 +88,7 @@ public class RLCarAgent : Agent
         // Observe dot product to indicate if moving to current checkpoint (1 observation)
         sensor.AddObservation(Vector3.Dot(kartMovement.sphere.velocity.normalized, checkpointHandler.DirectionToCheckpoint));
 
-        // 10 total observations
+        // 8 total observations
     }
 
     /// <summary>

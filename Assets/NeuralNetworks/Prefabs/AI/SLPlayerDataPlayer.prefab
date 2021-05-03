@@ -22,6 +22,11 @@ PrefabInstance:
       propertyPath: rayLength
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 3200084411432968002, guid: dd50fa708ef11644c8ed7044d4f65181,
+        type: 3}
+      propertyPath: layerMask.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3923346835510434523, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
       propertyPath: m_Name
@@ -92,7 +97,7 @@ PrefabInstance:
         type: 3}
       propertyPath: dataFile
       value: 
-      objectReference: {fileID: 4900000, guid: 086a693a173737d4ab3826b97aa3493a, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 8759233796690049044, guid: dd50fa708ef11644c8ed7044d4f65181,
         type: 3}
       propertyPath: training

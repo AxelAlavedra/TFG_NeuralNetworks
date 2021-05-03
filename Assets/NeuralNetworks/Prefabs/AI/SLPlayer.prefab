@@ -43,12 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df37e02ed1d863942a228aa662ae071d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rays: 3
+  rays: 5
   rayLength: 12
-  degrees: 90
+  degrees: 180
   layerMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1
 --- !u!54 &8939132572690405628
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -91,13 +91,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControlled: 0
-  training: 1
-  record: 0
-  graph: {fileID: 0}
+  training: 0
+  recordActions: 0
   brain: {fileID: 11400000, guid: eba31917fa9d0f6438481ec889b06c28, type: 2}
-  records: []
+  dataFile: {fileID: 4900000, guid: 5b65f29cf2dca4c4ead59c439757c151, type: 3}
+  iterations: 100000
   raySensor: {fileID: 3200084411432968002}
   kartMovement: {fileID: 3923346833741562529}
+  checkpointHandler: {fileID: 0}
 --- !u!1001 &5485793938973822451
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -118,7 +119,7 @@ PrefabInstance:
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.233
+      value: 13.73
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
@@ -128,7 +129,7 @@ PrefabInstance:
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 43.579
+      value: 54.27
       objectReference: {fileID: 0}
     - target: {fileID: 8814656821102253870, guid: 08d4e60d91eb8394b88f7e457d1e1365,
         type: 3}

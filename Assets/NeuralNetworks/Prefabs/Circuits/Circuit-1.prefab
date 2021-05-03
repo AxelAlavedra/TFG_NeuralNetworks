@@ -560,7 +560,7 @@ GameObject:
   - component: {fileID: 7659711832533145164}
   - component: {fileID: 7659711832533145165}
   - component: {fileID: 3650646327544326882}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: OuterPathMesh
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -849,7 +849,7 @@ GameObject:
   - component: {fileID: 7659711832752633714}
   - component: {fileID: 7659711832752633715}
   - component: {fileID: 2085418285}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: InnerBorderMesh
   m_TagString: Wall
   m_Icon: {fileID: 0}

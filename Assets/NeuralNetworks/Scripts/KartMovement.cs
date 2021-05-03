@@ -57,6 +57,7 @@ public class KartMovement : MonoBehaviour
 
         //Steering
         transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3(0, transform.eulerAngles.y + currentRotate, 0), Time.deltaTime * 5f);
+        Debug.Log(sphere.velocity.magnitude);
     }
 
     public void Steer(int direction, float amount)

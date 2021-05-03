@@ -35,7 +35,7 @@ namespace Axel.NeuralNetworks
         private int currentCheckpoint = 1;
 
         public float DistanceToCheckpoint { get { return distanceToCheckpoint; } }
-        public Vector3 DirectionToCheckpoint { get { return directionToCheckpoint; } }
+        public Vector3 DirectionToCheckpoint { get { return (checkpoints[currentCheckpoint] - agentGO.transform.position).normalized; } }
         public delegate void OnCheckpointReached();
         public OnCheckpointReached checkpointReached = null;
 
