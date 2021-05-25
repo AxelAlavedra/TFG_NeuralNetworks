@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 7010947130940078437}
   - component: {fileID: 7010947130940078436}
   - component: {fileID: 77695761936880277}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: MainPathMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
